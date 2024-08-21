@@ -1,19 +1,61 @@
+"use client"
+
 import TodoItem from "@/components/TodoItem";
-import Image from "next/image";
+import { useEffect, useState } from "react";
 
-export default async function Home() {
+export default function Home() {
 
-  const result = await fetch('http://localhost:3000/api');
-  const todos = await result.json(); 
-  console.log(todos);
+  // 내부데이터를 저장하기 위해서 state 로 처리..
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+  });
+  const [todos, setTodos] = useState([]);
+
+  // 최초로 로딩됬을때 콜백되는 함수..
+  useEffect(() => {
+    fetchAllTodos();
+  }, []);
+
+  const fetchAllTodos = async() => {
+    const result = await fetch('http://localhost:3000/api');
+    const todos = await result.json(); 
+    setTodos(todos)
+  }
+  
+  const onSubmitHandler = async (e) => {
+    e.preventDefault();
+    const response = await fetch('http://localhost:3000/api', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(formData)
+    });
+
+    await fetchAllTodos();
+
+  };
+  const onChangeHandler = (e) => {
+    const name = e.target.name;
+    const value = e.target.value;
+
+    setFormData(form => ({...form , [name]: value}));
+  };
 
   return (
     <div>
-      <form className="flex items-start flex-col gap-2 w-[80%] mt-24 px-2 mx-auto">
-        <input 
+      <form
+        onSubmit={onSubmitHandler} 
+        className="flex items-start flex-col gap-2 w-[80%] mt-24 px-2 mx-auto">
+        <input
+          name='title'
+          onChange={onChangeHandler} 
           type="text"
           className="px-3 py-2 border-2 w-full"/>
         <textarea
+          name='description'
+          onChange={onChangeHandler}
           className="px-3 py-2 border-2 w-full"></textarea>
         <button
           className="bg-orange-600 py-3 px-11 text-white rounded-xl">
@@ -44,7 +86,7 @@ export default async function Home() {
               <tbody>
                   {
                     todos.map(todo => {
-                      return <TodoItem todo={todo}/>
+                      return <TodoItem todo={todo} />
                     })
                   }
               </tbody>
