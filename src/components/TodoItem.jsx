@@ -9,10 +9,10 @@ export default function TodoItem(
         <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
             {id}
         </th>
-        <td className="px-6 py-4">
+        <td className={`px-6 py-4 ${isCompleted ? 'line-through' : ''}`}>
             {title}
         </td>
-        <td className="px-6 py-4">
+        <td className={`px-6 py-4 ${isCompleted ? 'line-through' : ''}`}>
             {description}
         </td>
         <td className="px-6 py-4">
