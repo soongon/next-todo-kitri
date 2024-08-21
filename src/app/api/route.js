@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 
 //  GET::/api 경로로 접근하면 실행되는 함수
 export async function GET() {
+    // 몽고디비에 접속하여 데이터를 가져온다.
+    // Mongoose 를 사용하여 접속..
     return NextResponse.json(
         [
             {
