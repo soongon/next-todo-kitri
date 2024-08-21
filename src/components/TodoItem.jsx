@@ -1,19 +1,21 @@
 import React from 'react'
 
-export default function TodoItem() {
+export default function TodoItem({todo}) {
+
+  const {id, title, description, isCompleted} = todo;
   return (
     <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
         <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-            1
+            {id}
         </th>
         <td className="px-6 py-4">
-            청소하기
+            {title}
         </td>
         <td className="px-6 py-4">
-            깨끗하게 할게요
+            {description}
         </td>
         <td className="px-6 py-4">
-            진행중
+            {isCompleted ? '완료' : '진행중'}
         </td>
         <td className="px-6 py-4 flex gap-1">
             <button
