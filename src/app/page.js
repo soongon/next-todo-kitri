@@ -25,16 +25,18 @@ export default function Home() {
   
   const onSubmitHandler = async (e) => {
     e.preventDefault();
-    const response = await fetch('http://localhost:3000/api', {
+    await fetch('http://localhost:3000/api', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(formData)
     });
-
     await fetchAllTodos();
-
+    setFormData({
+      title: '',
+      description: '',
+    });
   };
   const onChangeHandler = (e) => {
     const name = e.target.name;
@@ -43,6 +45,20 @@ export default function Home() {
     setFormData(form => ({...form , [name]: value}));
   };
 
+  const onDeleteHandler = async (mongoId) => {
+    await fetch(`http://localhost:3000/api?mongoId=${mongoId}`, {
+      method: 'DELETE'
+    }).then(res => res.json());
+    await fetchAllTodos();
+  }
+  const onCompleteHandler = async (mongoId) => {
+    await fetch(`http://localhost:3000/api?mongoId=${mongoId}`, {
+      method: 'PUT'
+    }).then(res => res.json());
+    await fetchAllTodos();
+    console.log('complete');
+  }
+
   return (
     <div>
       <form
@@ -50,11 +66,13 @@ export default function Home() {
         className="flex items-start flex-col gap-2 w-[80%] mt-24 px-2 mx-auto">
         <input
           name='title'
+          value={formData.title}
           onChange={onChangeHandler} 
           type="text"
           className="px-3 py-2 border-2 w-full"/>
         <textarea
           name='description'
+          value={formData.description}
           onChange={onChangeHandler}
           className="px-3 py-2 border-2 w-full"></textarea>
         <button
@@ -85,8 +103,17 @@ export default function Home() {
               </thead>
               <tbody>
                   {
-                    todos.map(todo => {
-                      return <TodoItem todo={todo} />
+                    todos.map((todo, index) => {
+                      return <TodoItem 
+                                key={index}
+                                id={index}
+                                mongoId={todo._id}
+                                title={todo.title}
+                                description={todo.description}
+                                isCompleted={todo.isCompleted}
+                                onDeleteHandler={onDeleteHandler}
+                                onCompleteHandler={onCompleteHandler}
+                                 />
                     })
                   }
               </tbody>
